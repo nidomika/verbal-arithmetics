@@ -66,21 +66,6 @@ class CryptarithmeticProblem:
         self.assignments[previous_carry] = 0
         return constraints
 
-    def is_complete(self, assignments):
-        return len(assignments) == len(self.variables)
-
-    def get_unassigned_var(self, assignments):
-        unassigned_variables = list(filter(lambda x: x not in assignments, self.variables))
-        return min(unassigned_variables, key=lambda x: len(self.variables[x].domain.domain))
-
-    def check_consistency(self, assignment, new_variable, new_value):
-        assignment_copy = copy.deepcopy(assignment)
-        assignment_copy[new_variable] = new_value
-        for constraint in self.constraints:
-            if not constraint.is_consistent(assignment_copy):
-                return False
-        return True
-
     def get_domain(self, var):
         firsts = [self.first[0], self.second[0], self.result[0]]
         if var in firsts:
@@ -92,12 +77,12 @@ class CryptarithmeticProblem:
 
     def update_domains(self, var, value):
         for v in self.variables:
-            if v != var and len(var) == 1 and len(v) == 1:  # czyli var i v to nie przeniesienie
+            if v != var and len(var) == 1 and len(v) == 1:
                 self.variables[v].get_domain().remove_from_domain(value)
 
     def cancel_domains(self, var, value):
         for v in self.variables:
-            if v != var and len(var) == 1 and len(v) == 1:  # czyli var i v to nie przeniesienie
+            if v != var and len(var) == 1 and len(v) == 1:
                 self.variables[v].get_domain().add_to_domain(value)
 
 

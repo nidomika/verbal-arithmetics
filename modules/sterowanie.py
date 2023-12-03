@@ -1,11 +1,13 @@
+import time
 from metoda import BacktrackingSearch
 from problem import CryptarithmeticProblem
 
 
 def get_user_input():
-    # equation = input("Please enter an equation (e.g., SEND + MORE = MONEY): ")
+    # equation = input("Proszę wpisać równanie (np. SEND + MORE = MONEY): ")
     # equation = "TWO + TWO = FOUR"
-    equation = "NUM + BER = PLAY"
+    # equation = "NUM + BER = PLAY"
+    equation = "SEND + MORE = MONEY"
     equation = equation.replace(" ", "")
     left_side, right_side = equation.split("=")
     addends = left_side.split("+")
@@ -45,14 +47,19 @@ def main():
     if message != "OK":
         print(message)
     else:
+        time_start = time.time()
         result = solve_problem(first, second, third)
-
-        if result is None:
+        time_end = time.time()
+        if result[0] is None:
             print("Nie znaleziono rozwiązania.")
         else:
             print("Znaleziono rozwiązanie dla równania:")
             print(first + " + " + second + " = " + third)
-            print(get_string_answer(result, first, second, third))
+            print(get_string_answer(result[0], first, second, third))
+
+        print("Czas wykonania: " + str(time_end - time_start) + "s")
+        print("Liczba węzłów: " + str(result[1]))
+        print("Liczba powrotów: " + str(result[2]))
 
 
 if __name__ == "__main__":
