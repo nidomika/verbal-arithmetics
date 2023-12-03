@@ -12,6 +12,9 @@ class CryptarithmeticProblem:
         self.constraints = self.get_constraints()
         self.domain_reduction()
 
+    # zredukuj dziedziny zmiennych na podstawie założeń matematycznych,
+    # pierwsza cyfra liczby nie może być 0, a jeśli liczba jest dłuższa niż wynik,
+    # to pierwsza cyfra wyniku musi być 1, a pierwsza cyfra liczby, która jest dłuższa od wyniku, musi być 9
     def domain_reduction(self):
         first_len, second_len, result_len = len(self.first), len(self.second), len(self.result)
 
@@ -27,6 +30,7 @@ class CryptarithmeticProblem:
                     self.assignments[self.second[0]] = 9
                     self.update_domains(self.second[0], 9)
 
+    # zwróć listę zmiennych
     def get_variables(self):
         variables = list(set(self.first + self.second + self.result))
         variables_elements = {}
@@ -35,11 +39,14 @@ class CryptarithmeticProblem:
             variables_elements[var] = Variable(var, domain)
         return variables_elements
 
+    # zwróć listę ograniczeń
     def get_constraints(self):
         constraints = []
         variables_copy = copy.deepcopy(list(self.variables.keys()))
+        # ograniczenie, że wszystkie zmienne mają różne wartości
         constraints += [AllDifferent(variables_copy)]
 
+        # ograniczenie, że suma zmiennych jest równa wynikowi
         first_padding_list = '0' * (len(self.result) - len(self.first))
         second_padding_list = '0' * (len(self.result) - len(self.second))
 
@@ -49,6 +56,7 @@ class CryptarithmeticProblem:
 
         previous_carry = None
 
+        # inicjalizacja zmiennych przenoszenia
         for index in range(len(self.result)):
             carry = 'x' + str(index)
             domain = self.get_domain(carry)
@@ -66,6 +74,7 @@ class CryptarithmeticProblem:
         self.assignments[previous_carry] = 0
         return constraints
 
+    # zwróć dziedzinę zmiennej
     def get_domain(self, var):
         firsts = [self.first[0], self.second[0], self.result[0]]
         if var in firsts:
@@ -75,17 +84,20 @@ class CryptarithmeticProblem:
         else:
             return Domain(list(range(0, 10)))
 
+    # aktualizuj dziedziny zmiennych
     def update_domains(self, var, value):
         for v in self.variables:
             if v != var and len(var) == 1 and len(v) == 1:
                 self.variables[v].get_domain().remove_from_domain(value)
 
+    # anuluj aktualizację dziedzin zmiennych
     def cancel_domains(self, var, value):
         for v in self.variables:
             if v != var and len(var) == 1 and len(v) == 1:
                 self.variables[v].get_domain().add_to_domain(value)
 
 
+# klasa abstrakcyjna Constraint
 class Constraint(ABC):
     @abstractmethod
     def is_consistent(self, assignment):
@@ -146,6 +158,7 @@ class Domain:
         return self.domain
 
 
+# klasa przechowująca zmienną i jej dziedzinę
 class Variable:
     def __init__(self, variable, domain):
         self.variable = variable
