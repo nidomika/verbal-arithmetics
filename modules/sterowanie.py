@@ -1,9 +1,11 @@
+from metoda import BacktrackingSearch
 from problem import CryptarithmeticProblem
 
 
 def get_user_input():
     # equation = input("Please enter an equation (e.g., SEND + MORE = MONEY): ")
-    equation = "TWO + TWO = FOUR"
+    # equation = "TWO + TWO = FOUR"
+    equation = "NUM + BER = PLAY"
     equation = equation.replace(" ", "")
     left_side, right_side = equation.split("=")
     addends = left_side.split("+")
@@ -23,12 +25,13 @@ def get_equation(first, second, result):
 
 
 def solve_problem(first, second, result):
-    solver = CryptarithmeticProblem(first, second, result)
-    return solver.backtracking(solver.assignments)
+    problem = CryptarithmeticProblem(first, second, result)
+    solver = BacktrackingSearch(problem)
+    return solver.solve()
 
 
 def get_string_answer(response, first, second, result):
-    if response != -1:
+    if response is not None:
         first_value = int("".join(list(map(lambda c: str(response[c]), first))))
         second_value = int("".join(list(map(lambda c: str(response[c]), second))))
         result_value = int("".join(list(map(lambda c: str(response[c]), result))))
